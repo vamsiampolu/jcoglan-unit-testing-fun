@@ -141,3 +141,14 @@ A spy inspects the behaviour of an existing function without replacing it. When 
 
 In `jstest`, mocks are defined using `expect`, usually `expect` is used with `BDD` style assertions in other frameworks. The `jstest` framework does not define `spies`, we use sinon spies for a change.
 
+---
+
+**Testing async behaviour**
+
+This section in the book is about letting async behaviour go through and executing assertions in a `callback`. The author recommends executing `assertions` inside the `done` callback. I need to figure out `mocha`'s recommendations/best practices on that. Both the `resume` function provided here and `mocha`'s `done` are error-first callbacks.
+
+Sinon has fakeTimers(?) and mocha allows returning promises from tests.
+
+There is a good explanation of using `async` in there as well, need to do the examples and expand this out.
+
+---
