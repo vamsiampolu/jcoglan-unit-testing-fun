@@ -98,6 +98,46 @@ Nested `describe` blocks: an `it` runs after all the `before` blocks in all encl
 
 **Stubs, Mocks and Spies**
 
+1. Stubs
+
 You would not like to have the test make a call to the server or the database when it runs, this might the test slow and/or unreliable. To avoid doing this, we can replace certain functions with a fake implementation that is active only for the duration of the test. As the system under test becomes more complex, you would need to add more fakes to the mix and clean up in the `afterEach` block.
 
-Also, you might need to have different responses based on the input you provide to the function/method that you stub. Testing frameworks or libraries like `sinon` can do this automagically.`jstest` implicitly resets all stubs at the end of a test, if I were using `sinon`, I would need to call the `restore` method in `afterEach`Stubs have a `yields` method that makes a function invoke its callback with the parameters passed to it.
+Also, you might need to have different responses based on the input you provide to the function/method that you stub. Testing frameworks or libraries like `sinon` can do this automagically.`jstest` implicitly resets all stubs at the end of a test, if I were using `sinon`, I would need to call the `restore` method in `afterEach`Stubs have a `yields` method that makes a function invoke its callback with the parameters passed to it. If the function we are stubbing returns a value, you call it with `returns` instead of `yields`.
+
+You can get a `stub` to provide different responses when different arguments are provided to it:
+
+    stub($, "get").given("/").yields(["Homepage HTML"])
+    stub($, "get").given("/users/18787.json").yields(['{"username":"jcoglan"}'])
+
+Sinonjs uses `withArgs` in place of `given` provided by `jstest`. In `jstest`, stubs use `equals` on the arguments passed to it if `given` is provided. Stubs can use `matchers` in `given`:
+
+  |Matcher|Description|
+  |:-----:|:---------:|
+  |anything|matches any value|
+  |instanceof|matches a value of type|
+  |arrayIncluding|matches if a array includes members|
+  |objectIncludes|matches object if it contains properties|
+  |match|match a custom RegExp|
+
+When using `yields` with `given` args are matched upto a function's callback.
+
+2. Mocks
+
+Mocks are used to test side-effects, the question with a stub is:
+
+> If this function were to return this, what would my function do?
+
+with a mock:
+
+> What functions does my function call and how does it call them?
+
+Use mocks when there is a well defined boundary between two APIs, the API you are mocking is stable and well understood. A mock needs to be setup to record any calls to the function along with certain expectations before the function we are testing is called. If the expectations of the mock are not satisfied, the test is considered a failure. Mocks can also use `yields` and `returns` to verify the arguments passed to the callback or returned from a function.
+
+> Assertions --> test value returned by function, Stubs -> create various test responses from an external API that the function calls, Mocks -> check to see that external API is called correctly.
+
+3. Spies
+
+A spy inspects the behaviour of an existing function without replacing it. When mocking, you replace an external API method with a fake. However, when `spy`ing, you let the original function execute. If an API is not well defined or well understood, it is better to let the original function through instead of replacing it with a `mock`.
+
+In `jstest`, mocks are defined using `expect`, usually `expect` is used with `BDD` style assertions in other frameworks. The `jstest` framework does not define `spies`, we use sinon spies for a change.
+
