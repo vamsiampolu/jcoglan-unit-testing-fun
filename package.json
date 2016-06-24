@@ -1,0 +1,16 @@
+{
+  "name": "jcoglan-unit-testing-fun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "vamsiampolu",
+  "license": "ISC",
+  "devDependencies": {
+    "jstest": "^1.0.5",
+    "sinon": "^1.17.4"
+  }
+}
