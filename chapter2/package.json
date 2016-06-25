@@ -1,0 +1,17 @@
+{
+  "name": "chapter2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "vamsiampolu",
+  "license": "ISC",
+  "dependencies": {
+    "curry": "^1.2.0",
+    "request": "^2.72.0"
+  }
+}

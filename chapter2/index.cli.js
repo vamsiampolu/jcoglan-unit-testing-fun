@@ -109,4 +109,31 @@ JS.Test.describe('debug() with spies',function(){
   })
 })
 
+var Counter = function(){
+  this.count = 0
+}
+
+Counter.prototype.inc = function(n,cb){
+  var self = this
+  setTimeout(function(){
+    self.count +=n
+    cb()
+  },10)
+}
+
+JS.Test.describe('Counter',function(){
+  this.before(function(){
+    this.counter = new Counter()
+  })
+
+  this.it('increments the count',function(resume){
+    var self = this
+    this.counter.inc(5,function(){
+        resume(function(){
+          self.assertEqual(5,self.counter.count)
+        })
+    })
+  })
+})
+
 JS.Test.autorun()

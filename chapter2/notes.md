@@ -151,4 +151,50 @@ Sinon has fakeTimers(?) and mocha allows returning promises from tests.
 
 There is a good explanation of using `async` in there as well, need to do the examples and expand this out.
 
+When testing something asynchronously, the testing frssmework cannot capture the stack trace using try/catch like it normally would. Instead it has to rely on `window.onerror` or process.on('uncaughtException',cb) to perform error reporting. If the assertion is run in a callback passed to the resume function, it is run synchronously and any error with the assertion can be reported correctly.If a test has the `resume` as an argument, jstest waits for the test to call `resume` and times the test out and reports an error if callback is not invoked.
+
+> If a framework has no support for `async` testing, it might cause the test to hang or time out. I think all major frameworks including Jasmine support this.
+
+`resume` follows the error first callback convention, if the first argument to `resume` is a `String` or an `Object`, it is reported as an error.
+
+To avoid wrapping your entire code in a single `it` block, create `helper` module to start and stop the server, there is an `include` in the jstest api, I presume this is mixin. Wierd for a test framework to keep changing `this` so much, but what do I know.
+
+Could this `helper` module use `supertest` for a better experience(???)
+
+One can use `async` to great effect when working with callbacks, it makes the continous passing style tolerable as it takes care of managing intermediate values and errors in a chain of callbacks. Continuables or curried functions whose last parameter is a callback work exceptionally well with `async`. Continuables can created using the curry module on npm.
+
+> To test any async control flow construct, you need to use a library that understands that construct.
+
+There is no `curry.object`, instead I used this code:
+
+```
+function isFunction (functionToCheck) {
+  var getType = {}
+  return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]'
+}
+
+for (var i in steps) {
+  if (steps.hasOwnProperty(i) && isFunction(i)) {
+    steps[i] = curry(steps[i])
+  }
+}
+```
+
+and my tests are timing out.
+
 ---
+
+Mini rant
+
+All the `assertions` are available on `this` within the `describe` block, these assertions have been moved to `ServerSteps` which means that the module must be bound to the same `this` as the `describe` block. So, it is included as a mixin(presumably). But callbacks are executed by `async` in a different `context` where `this` could either be `global`,`undefined` or `async`. So we do `self=this`, and I hate that statement.
+
+This makes the case for using an assertion library seperate from the `testing framework`, so either use `chai` or `assert` when  `unit tedting`. And I hate `this`.
+
+End of rant
+
+---
+
+> Export `app` from your code and create your server elsewhere, this will allow you to spin up servers programmatically for testing/different environment. Thats why express-generator uses `bin/www`, I guess.
+
+---
+

@@ -105,17 +105,4 @@ JS.Test.describe('debug() with mocks',function(){
   })
 })
 
-JS.Test.describe('debug() with spies',function(){
-  this.before(function(){
-    sinon.spy(console,'info')
-  })
-  this.it('writes data to the console with timestamps',function(){
-    debug('Hello')
-    sinon.assert.calledWithMatch(console.info, /^[0-9]{13} hello$/)
-  })
-  this.after(function(){
-      console.info.restore()
-  })
-})
-
 JS.Test.autorun()
