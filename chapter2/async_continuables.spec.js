@@ -7,11 +7,14 @@ steps = curry.object(steps)
 JS.Test.describe('Storage Server(Continuables)', function () {
   this.include(steps)
   this.before(function (resume) {
-    async.series([this.startServer], resume)
+    async.series([this.startServer(4180)], resume)
   })
 
   this.after(function (resume) {
-    async.series([this.stopServer], resume)
+    async.series([
+      this.clearData(),
+      this.stopServer()
+    ], resume)
   })
 
   this.it('puts and gets data', function (resume) {

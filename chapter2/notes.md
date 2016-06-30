@@ -76,9 +76,21 @@ The `jstest` assertions:
 
 Picking an `assertion` style is a matter of choice, if you cannot read your tests and you cannot write new tests, assertions or new matchers easily, it is not meaningful to do unit testing in the first place. It does not `reduce risk` of program failing in production.
 
+---
+
 `with` is a Javascript feature that makes the `properties` of an `object` look like `local variables`. It saves you from `prefixing` every statement with `this` .
 
-> I tested the code without `with`, instead using `this.assertEquals` and it works correctly, `Mr. Crockford` approves
+What is `with` and why the author uses it?
+
+Jasmine and mocha introduce global variables like `describe`,`it` and `expect`. The testing framework coexists in the same environment as the javascript code. Thus, the author uses a single variable called `JSTest` and binds everything including assertions and any values to `this`.
+
+As we know, functions have a scope(and now blocks have a scope in ES6) and closures look up variables in parent scopes. One can think of a scope as an object that has variable names as keys and their current value as the value for the property.`with` takes an object and creates a new scope,exposing all the properties on the object as
+variables within the scope.
+
+`with` is generally considered a bad practice in Javascript, it makes it unclear if something is a variable scoped to a function or something that exists only in the scope created by `with`. Additionally, `with` is not available in `strict mode`.
+
+
+---
 
 An `it` block represents a `test`, this allows the `testing framework` to isolate or skip your test when nessecary.
 
@@ -165,22 +177,7 @@ One can use `async` to great effect when working with callbacks, it makes the co
 
 > To test any async control flow construct, you need to use a library that understands that construct.
 
-There is no `curry.object`, instead I used this code:
-
-```
-function isFunction (functionToCheck) {
-  var getType = {}
-  return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]'
-}
-
-for (var i in steps) {
-  if (steps.hasOwnProperty(i) && isFunction(i)) {
-    steps[i] = curry(steps[i])
-  }
-}
-```
-
-and my tests are timing out.
+Continuables are functions that seperate the processing of application logic and control flow logic, this is done by partially applying a function that accepts a callback to return a new function that accepts the callback and processes the result/error. Continuables are like promises but without the `nice API`, `stack traces` or `error handling`.
 
 ---
 
@@ -197,4 +194,3 @@ End of rant
 > Export `app` from your code and create your server elsewhere, this will allow you to spin up servers programmatically for testing/different environment. Thats why express-generator uses `bin/www`, I guess.
 
 ---
-

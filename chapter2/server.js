@@ -22,12 +22,14 @@ app.get('/:id', function (req, res) {
 app.put('/:id', function (req, res) {
   var id = req.params.id
   storage[id] = req.body.value
-  res.send(201).send('Created')
+  res.statusCode = 201
+  res.send('Created')
 })
 
 app.delete('/', function (req, res) {
   storage = {}
-  res.status(200).send('Storage cleared')
+  res.statusCode = 200
+  res.send('Storage cleared')
 })
 
 // http.createServer(app).listen(3000, function () {
