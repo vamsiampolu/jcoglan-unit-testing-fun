@@ -54,6 +54,6 @@ If not it is better to use the approaches described above.
 
 Streams have the advantage that they can be written to do only thing and then be combined to do larger units of work. This makes them easier to use and easy to test because you can test one thing without having to worry about having to test a side-effect also.
 
-> TODO: Need to do the examples and look up the packages that the author is using.
+From doing the examples, it has finally got through into my thick head that there is no clever way of unit testing nodejs streams. We can only test a stream by calling it. At this moment, I do not know if that is a good or a bad thing because `stream`s can be infinite and can be chained together ad infinitum. At some point, we have to figure out what we can do to accomplish
 
 ---
